@@ -8,7 +8,7 @@ from ufal.chu_liu_edmonds import chu_liu_edmonds
 
 from network import Network
 
-from reporting.metrics import UAS, Spearman
+from reporting.metrics import UAS, Spearman, Pearson, Kendall
 
 
 class Reporter():
@@ -82,7 +82,16 @@ class CorrelationReporter(Reporter):
         
         self._languages = args.languages
         self._tasks = tasks
-        self.spearman_d = defaultdict(dict)
+        self.correlation_d = defaultdict(dict)
+
+        if args.correlation.lower() == 'spearman':
+            self.correlation_metric = Spearman
+        elif args.correlation.lower() == 'pearson':
+            self.correlation_metric = Pearson
+        elif args.correlation.lower() == 'kendall':
+            self.correlation_metric = Kendall
+        else:
+            raise f"No such correlation metric found: {args.correlation}"
     
     def write(self, args):
         for language in self._languages:
@@ -96,11 +105,11 @@ class CorrelationReporter(Reporter):
                             prefix += 'dp{}.'.format(self._drop_parts)
                     
                     with open(os.path.join(args.out_dir, prefix + 'spearman'), 'w') as sperarman_f:
-                        for sent_l, val in self.spearman_d[lang][task].result().items():
+                        for sent_l, val in self.correlation_d[lang][task].result().items():
                             sperarman_f.write(f'{sent_l}\t{val}\n')
                     
                     with open(os.path.join(args.out_dir, prefix + 'spearman_mean'), 'w') as sperarman_mean_f:
-                        result = str(np.nanmean(np.fromiter(self.spearman_d[lang][task].result().values(), dtype=float)))
+                        result = str(np.nanmean(np.fromiter(self.correlation_d[lang][task].result().values(), dtype=float)))
                         sperarman_mean_f.write(result + '\n')
     
     def compute(self, args):
@@ -108,9 +117,9 @@ class CorrelationReporter(Reporter):
         for language in self._languages:
             for lang in language.split('+'):
                 for task in self._tasks:
-                    self.spearman_d[lang][task] = Spearman()
+                    self.correlation_d[lang][task] = self.correlation_metric
                     for _, _, pred_values, gold_values, mask in self.predict(args, language, lang, task):
-                        self.spearman_d[lang][task](gold_values, pred_values, mask)
+                        self.correlation_d[lang][task](gold_values, pred_values, mask)
 
 
 class UASReporter(Reporter):

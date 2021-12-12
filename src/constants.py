@@ -1,4 +1,5 @@
 from nltk.corpus import wordnet as wn
+
 # Wordpieces | Tokens limits
 MAX_TOKENS = 128
 MAX_WORDPIECES = 128
@@ -20,11 +21,11 @@ CONLL_NODE = 17
 # we only consider NOUNs and VERBs, because there is no graph structure for other POS
 pos2wnpos = {"NOUN": wn.NOUN,
              "VERB": wn.VERB}
-             # "ADJ": wn.ADJ,
-             # "ADV": wn.ADV}
-             
+# "ADJ": wn.ADJ,
+# "ADV": wn.ADV}
+
 lang2iso = {'en': 'eng', 'es': 'spa', 'fi': 'fin', 'pl': 'pol', 'ar': 'arb',
-        'id': 'ind', 'zh': 'cmn', 'fr': 'fra', 'sl': 'slv', 'eu': 'eus'}
+            'id': 'ind', 'zh': 'cmn', 'fr': 'fra', 'sl': 'slv', 'eu': 'eus'}
 
 # BERT model parameters
 LANGUAGE_CHINESE = "chinese"
@@ -66,7 +67,6 @@ MODEL_DIMS = {f"bert-{SIZE_BASE}-{LANGUAGE_MULTILINGUAL}-{CASING_CASED}": 768,
               f"random-bert": 768
               }
 
-
 MODEL_LAYERS = {f"bert-{SIZE_BASE}-{LANGUAGE_MULTILINGUAL}-{CASING_CASED}": 12,
                 f"bert-{SIZE_BASE}-{LANGUAGE_MULTILINGUAL}-{CASING_UNCASED}": 12,
                 f"bert-{SIZE_BASE}-{CASING_CASED}": 12,
@@ -84,6 +84,6 @@ MODEL_LAYERS = {f"bert-{SIZE_BASE}-{LANGUAGE_MULTILINGUAL}-{CASING_CASED}": 12,
 
 BERT_MODEL_DIR = "/net/projects/bert/models/"
 
-#data pipeline options
+# data pipeline options
 BUFFER_SIZE = 50 * 1000 * 1000
 SHUFFLE_SIZE = 512
