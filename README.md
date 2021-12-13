@@ -1,6 +1,6 @@
 # Orthogonal Probing
 
-The repository contains code for [Introducing Orthogonal Constraint in Structural Probes](https://arxiv.org/abs/2012.15228)
+The repository contains code for [Introducing Orthogonal Constraint in Structural Probes](https://arxiv.org/abs/2012.15228) and some extensions to run various ablation experiments and reproduce the original paper results. 
 
 ## Data preparation
 
@@ -41,6 +41,7 @@ a new subdirectory of `../experiments`. Essential arguments are:
 * `tasks`: a list of probing objectives, described below.
 * `learning-rate`: initial learning rate.
 * `ortho`: orthogonal penalty weight.
+* `norm`: distance norm used to approximate tree distances (euclidean, 1, 2, 3, tf.inf)
 
 Description of other arguments can be found in `src/probe.py`.
 
@@ -67,3 +68,18 @@ python report.py ../experiments ../resources/tf_data --languages "en" --layer-in
 
 The definition of the arguments is the same as in `src/report.py`. Results will be saved to a subdirectory created in the previous
 step, thus it's important to call `report.py` with the same arguments as `probe.py`.
+
+## Ablation Experiments
+
+Sample command to train the model with L1 distance metric over all the layers on engligh dataset:
+
+`python probe.py ../experiments ../resources/tf_data --languages "en" --layer-index -1 --tasks "dep_depth dep_distance pos_depth pos_distance" --learning-rate 0.02 --ortho 0.05 --norm "1" --batch-size 12`
+
+Sample command to evaluate the model with various correlation methods:
+
+`python report.py ../experiments ../resources/tf_data --languages "en" --layer-index -1 --tasks "dep_depth dep_distance pos_depth pos_distance" --correlation "spearman"`
+
+`python report.py ../experiments ../resources/tf_data --languages "en" --layer-index -1 --tasks "dep_depth dep_distance pos_depth pos_distance" --correlation "pearson"`
+
+`python report.py ../experiments ../resources/tf_data --languages "en" --layer-index -1 --tasks "dep_depth dep_distance pos_depth pos_distance" --correlation "kendall"`
+
